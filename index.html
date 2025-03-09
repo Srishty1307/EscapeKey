@@ -17,26 +17,27 @@
             align-items: center;
             background-color: #F9D923;
             font-family: 'Poppins', sans-serif;
-            position: relative;
         }
 
         .container {
-            width: 300px;
-            height: 500px;
+            width: 90%;
+            max-width: 450px;
+            padding: 20px;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            gap: 20px;
+            gap: 30px;
         }
 
         .button {
-            width: 200px;
-            height: 80px;
+            width: 90%;
+            max-width: 300px;
+            height: 100px;
             border: none;
-            border-radius: 10px;
+            border-radius: 15px;
             cursor: pointer;
-            font-size: 32px;
+            font-size: 36px;
             font-weight: bold;
             text-align: center;
             color: white;
@@ -59,13 +60,13 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 10px 15px;
+            padding: 15px;
             position: absolute;
             top: 0;
         }
 
         .brand {
-            font-size: 24px;
+            font-size: 28px;
             font-weight: bold;
             letter-spacing: 1px;
             color: black;
@@ -73,8 +74,8 @@
 
         .icons {
             display: flex;
-            gap: 15px;
-            font-size: 20px;
+            gap: 20px;
+            font-size: 24px;
         }
 
         .icons i {
@@ -91,28 +92,30 @@
             border-radius: 8px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             overflow: hidden;
-            width: 180px;
-            opacity: 0;
-            transform: translateY(-10px);
-            transition: opacity 0.3s ease, transform 0.3s ease;
+            width: 200px;
+            font-size: 18px;
         }
 
         .menu a {
             display: block;
-            padding: 10px;
+            padding: 12px;
             color: black;
             text-decoration: none;
-            font-size: 16px;
         }
 
         .menu a:hover {
             background: #eee;
         }
 
-        .menu.show {
-            display: block;
-            opacity: 1;
-            transform: translateY(0);
+        @media (max-width: 480px) {
+            .container {
+                gap: 35px;
+            }
+
+            .button {
+                height: 90px;
+                font-size: 32px;
+            }
         }
     </style>
 </head>
@@ -123,7 +126,7 @@
             <div class="icons">
                 <i class="bi bi-search" onclick="window.location.href='search.html'"></i>
                 <i class="bi bi-person" onclick="window.location.href='account.html'"></i>
-                <i class="bi bi-three-dots-vertical" onclick="toggleMenu(event)"></i>
+                <i class="bi bi-three-dots-vertical" onclick="toggleMenu()"></i>
             </div>
         </nav>
         <!-- Dropdown Menu -->
@@ -135,8 +138,8 @@
     </header>
 
     <div class="container">
-        <button class="button red" onclick="triggerSOS()">S O S</button>
-        <button class="button blue" onclick="changeColor(this)">Call Me</button>
+        <button class="button red" onclick="changeColor(this)">S O S</button>
+        <button class="button blue" onclick="sendPrecautionCall()">Call Me</button>
     </div>
 
     <script>
@@ -145,33 +148,24 @@
             button.classList.add("green");
         }
 
-        function toggleMenu(event) {
-            event.stopPropagation(); // Prevents auto-closing when clicking the menu button
+        function toggleMenu() {
             var menu = document.getElementById("menu");
-            menu.classList.toggle("show");
+            menu.style.display = (menu.style.display === "block") ? "none" : "block";
         }
 
         // Hide menu when clicking outside
         document.addEventListener("click", function(event) {
             var menu = document.getElementById("menu");
-            if (!menu.contains(event.target)) {
-                menu.classList.remove("show");
+            var threeDots = document.querySelector(".bi-three-dots-vertical");
+
+            if (!menu.contains(event.target) && event.target !== threeDots) {
+                menu.style.display = "none";
             }
         });
 
-        function triggerSOS() {
-            let contacts = JSON.parse(localStorage.getItem("emergencyContacts")) || [];
-
-            if (contacts.length === 0) {
-                alert("No emergency contacts saved! Please add contacts first.");
-                return;
-            }
-
-            // Call each contact automatically
-            contacts.forEach(contact => {
-                let callLink = `tel:${contact.number}`;
-                window.open(callLink);
-            });
+        function sendPrecautionCall() {
+            alert("A precautionary call has been made. Stay calm and follow the planned script.");
+            // You can add actual call functionality using Twilio API or WebRTC
         }
     </script>
 </body>
