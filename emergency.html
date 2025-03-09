@@ -3,144 +3,109 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Add Emergency Contacts</title>
+    <title>Emergency Page</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@600&display=swap');
+
         body {
-            font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
             background-color: #F9D923;
-            color: #333;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        header {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px;
+            background: #fff;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+        }
+
+        .brand {
+            font-size: 28px;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+
+        .icons {
+            display: flex;
+            gap: 20px;
+            font-size: 24px;
+        }
+
+        .icons i {
+            cursor: pointer;
         }
 
         .container {
-            max-width: 500px;
-            margin: 50px auto;
+            width: 90%;
+            max-width: 450px;
             padding: 20px;
-            background-color: white;
-            border-radius: 10px;
-            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
-            text-align: center;
-        }
-
-        h2 {
-            color: #EB5353;
-        }
-
-        input {
-            width: 80%;
-            padding: 10px;
-            margin: 10px 0;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-
-        button {
-            padding: 10px 15px;
-            background-color: #36AE7C;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-weight: bold;
-        }
-
-        button:hover {
-            background-color: #2D8A62;
-        }
-
-        .contact-list {
-            margin-top: 20px;
-            text-align: left;
-        }
-
-        .contact {
+            margin-top: 80px;
             display: flex;
-            justify-content: space-between;
+            flex-direction: column;
+            gap: 20px;
             align-items: center;
-            padding: 10px;
-            background-color: #F5F5F5;
-            margin: 5px 0;
-            border-radius: 5px;
         }
 
-        .delete-btn {
-            background-color: #EB5353;
+        .button {
+            width: 100%;
+            height: 80px;
             border: none;
-            padding: 5px 10px;
-            color: white;
-            border-radius: 3px;
+            border-radius: 15px;
             cursor: pointer;
+            font-size: 28px;
+            font-weight: bold;
+            text-align: center;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: transform 0.2s;
         }
 
-        .delete-btn:hover {
-            background-color: #C72C41;
+        .red { background-color: #EB5353; }
+        .blue { background-color: #187498; }
+        .green { background-color: #36AE7C; }
+
+        .button:hover {
+            transform: scale(1.05);
+        }
+
+        @media (max-width: 480px) {
+            .button {
+                height: 70px;
+                font-size: 24px;
+            }
         }
     </style>
 </head>
 <body>
+    <header>
+        <div class="brand">ESCAPE KEY</div>
+        <nav>
+            <div class="icons">
+                <i class="bi bi-search" onclick="window.location.href='search.html'"></i>
+                <i class="bi bi-person" onclick="window.location.href='account.html'"></i>
+            </div>
+        </nav>
+    </header>
 
-<div class="container">
-    <h2>Add Emergency Contacts</h2>
-    
-    <input type="text" id="contactName" placeholder="Contact Name">
-    <input type="tel" id="contactNumber" placeholder="Contact Number">
-    <button onclick="addContact()">Add Contact</button>
-
-    <div class="contact-list" id="contactList">
-        <h3>Saved Contacts</h3>
-        <p>No contacts added yet.</p>
+    <div class="container">
+        <button class="button red" onclick="alert('SOS Activated!')">S O S</button>
+        <button class="button blue" onclick="alert('Calling Emergency Contact')">Call Contact</button>
     </div>
-</div>
-
-<script>
-    // Load contacts from local storage
-    let contacts = JSON.parse(localStorage.getItem("emergencyContacts")) || [];
-
-    function renderContacts() {
-        const contactList = document.getElementById("contactList");
-        contactList.innerHTML = "<h3>Saved Contacts</h3>";
-
-        if (contacts.length === 0) {
-            contactList.innerHTML += "<p>No contacts added yet.</p>";
-            return;
-        }
-
-        contacts.forEach((contact, index) => {
-            contactList.innerHTML += `
-                <div class="contact">
-                    <span>${contact.name} - ${contact.number}</span>
-                    <button class="delete-btn" onclick="deleteContact(${index})">Delete</button>
-                </div>
-            `;
-        });
-
-        localStorage.setItem("emergencyContacts", JSON.stringify(contacts));
-    }
-
-    function addContact() {
-        const name = document.getElementById("contactName").value.trim();
-        const number = document.getElementById("contactNumber").value.trim();
-
-        if (name === "" || number === "") {
-            alert("Please enter both name and number!");
-            return;
-        }
-
-        contacts.push({ name, number });
-        renderContacts();
-        document.getElementById("contactName").value = "";
-        document.getElementById("contactNumber").value = "";
-    }
-
-    function deleteContact(index) {
-        contacts.splice(index, 1);
-        renderContacts();
-    }
-
-    renderContacts();
-</script>
-
 </body>
 </html>
