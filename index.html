@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mobile Layout</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@600&display=swap');
+
+        body {
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #F9D923;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .container {
+            width: 300px;
+            height: 500px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .button {
+            width: 200px;
+            height: 80px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 32px;
+            font-weight: bold;
+            text-align: center;
+            color: white;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .red { background-color: #EB5353; }
+        .blue { background-color: #187498; }
+        .green { background-color: #36AE7C; }
+
+        .button:hover {
+            transform: scale(1.05);
+        }
+
+        header {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 15px;
+            position: absolute;
+            top: 0;
+        }
+
+        .brand {
+            font-size: 24px;
+            font-weight: bold;
+            letter-spacing: 1px;
+            color: black;
+        }
+
+        .icons {
+            display: flex;
+            gap: 15px;
+            font-size: 20px;
+        }
+
+        .icons i {
+            cursor: pointer;
+        }
+
+        /* Dropdown menu styles */
+        .menu {
+            display: none;
+            position: absolute;
+            top: 40px;
+            right: 15px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            width: 180px;
+        }
+
+        .menu a {
+            display: block;
+            padding: 10px;
+            color: black;
+            text-decoration: none;
+            font-size: 16px;
+        }
+
+        .menu a:hover {
+            background: #eee;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="brand">ESCAPE KEY</div>
+        <nav>
+            <div class="icons">
+                <i class="bi bi-search" onclick="window.location.href='search.html'"></i>
+                <i class="bi bi-person" onclick="window.location.href='account.html'"></i>
+                <i class="bi bi-three-dots-vertical" onclick="toggleMenu()"></i>
+            </div>
+        </nav>
+        <!-- Dropdown Menu -->
+        <div id="menu" class="menu">
+            <a href="resources.html">Resources Page</a>
+            <a href="about.html">About Us</a>
+            <a href="emergency.html">Add Emergency Contacts</a>
+        </div>
+    </header>
+
+    <div class="container">
+        <button class="button red" onclick="changeColor(this)">S O S</button>
+        <button class="button blue" onclick="changeColor(this)">Call Me</button>
+    </div>
+
+    <script>
+        function changeColor(button) {
+            button.classList.remove("red", "blue");
+            button.classList.add("green");
+        }
+
+        function toggleMenu() {
+            var menu = document.getElementById("menu");
+            if (menu.style.display === "block") {
+                menu.style.display = "none";
+            } else {
+                menu.style.display = "block";
+            }
+        }
+
+        // Hide menu when clicking outside
+        document.addEventListener("click", function(event) {
+            var menu = document.getElementById("menu");
+            var threeDots = document.querySelector(".bi-three-dots-vertical");
+
+            if (!menu.contains(event.target) && event.target !== threeDots) {
+                menu.style.display = "none";
+            }
+        });
+    </script>
+</body>
+</html>
