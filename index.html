@@ -17,6 +17,7 @@
             align-items: center;
             background-color: #F9D923;
             font-family: 'Poppins', sans-serif;
+            position: relative;
         }
 
         .container {
@@ -84,13 +85,16 @@
         .menu {
             display: none;
             position: absolute;
-            top: 40px;
+            top: 50px;
             right: 15px;
             background: white;
             border-radius: 8px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             overflow: hidden;
             width: 180px;
+            opacity: 0;
+            transform: translateY(-10px);
+            transition: opacity 0.3s ease, transform 0.3s ease;
         }
 
         .menu a {
@@ -104,6 +108,12 @@
         .menu a:hover {
             background: #eee;
         }
+
+        .menu.show {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
+        }
     </style>
 </head>
 <body>
@@ -113,7 +123,7 @@
             <div class="icons">
                 <i class="bi bi-search" onclick="window.location.href='search.html'"></i>
                 <i class="bi bi-person" onclick="window.location.href='account.html'"></i>
-                <i class="bi bi-three-dots-vertical" onclick="toggleMenu()"></i>
+                <i class="bi bi-three-dots-vertical" onclick="toggleMenu(event)"></i>
             </div>
         </nav>
         <!-- Dropdown Menu -->
@@ -125,7 +135,7 @@
     </header>
 
     <div class="container">
-        <button class="button red" onclick="changeColor(this)">S O S</button>
+        <button class="button red" onclick="triggerSOS()">S O S</button>
         <button class="button blue" onclick="changeColor(this)">Call Me</button>
     </div>
 
@@ -135,24 +145,34 @@
             button.classList.add("green");
         }
 
-        function toggleMenu() {
+        function toggleMenu(event) {
+            event.stopPropagation(); // Prevents auto-closing when clicking the menu button
             var menu = document.getElementById("menu");
-            if (menu.style.display === "block") {
-                menu.style.display = "none";
-            } else {
-                menu.style.display = "block";
-            }
+            menu.classList.toggle("show");
         }
 
         // Hide menu when clicking outside
         document.addEventListener("click", function(event) {
             var menu = document.getElementById("menu");
-            var threeDots = document.querySelector(".bi-three-dots-vertical");
-
-            if (!menu.contains(event.target) && event.target !== threeDots) {
-                menu.style.display = "none";
+            if (!menu.contains(event.target)) {
+                menu.classList.remove("show");
             }
         });
+
+        function triggerSOS() {
+            let contacts = JSON.parse(localStorage.getItem("emergencyContacts")) || [];
+
+            if (contacts.length === 0) {
+                alert("No emergency contacts saved! Please add contacts first.");
+                return;
+            }
+
+            // Call each contact automatically
+            contacts.forEach(contact => {
+                let callLink = `tel:${contact.number}`;
+                window.open(callLink);
+            });
+        }
     </script>
 </body>
 </html>
