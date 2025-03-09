@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Emergency Contacts</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #F9D923;
+            color: #333;
+        }
+
+        .container {
+            max-width: 500px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+            text-align: center;
+        }
+
+        h2 {
+            color: #EB5353;
+        }
+
+        input {
+            width: 80%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        button {
+            padding: 10px 15px;
+            background-color: #36AE7C;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        button:hover {
+            background-color: #2D8A62;
+        }
+
+        .contact-list {
+            margin-top: 20px;
+            text-align: left;
+        }
+
+        .contact {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            background-color: #F5F5F5;
+            margin: 5px 0;
+            border-radius: 5px;
+        }
+
+        .delete-btn {
+            background-color: #EB5353;
+            border: none;
+            padding: 5px 10px;
+            color: white;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+
+        .delete-btn:hover {
+            background-color: #C72C41;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Add Emergency Contacts</h2>
+    
+    <input type="text" id="contactName" placeholder="Contact Name">
+    <input type="tel" id="contactNumber" placeholder="Contact Number">
+    <button onclick="addContact()">Add Contact</button>
+
+    <div class="contact-list" id="contactList">
+        <h3>Saved Contacts</h3>
+        <p>No contacts added yet.</p>
+    </div>
+</div>
+
+<script>
+    // Load contacts from local storage
+    let contacts = JSON.parse(localStorage.getItem("emergencyContacts")) || [];
+
+    function renderContacts() {
+        const contactList = document.getElementById("contactList");
+        contactList.innerHTML = "<h3>Saved Contacts</h3>";
+
+        if (contacts.length === 0) {
+            contactList.innerHTML += "<p>No contacts added yet.</p>";
+            return;
+        }
+
+        contacts.forEach((contact, index) => {
+            contactList.innerHTML += `
+                <div class="contact">
+                    <span>${contact.name} - ${contact.number}</span>
+                    <button class="delete-btn" onclick="deleteContact(${index})">Delete</button>
+                </div>
+            `;
+        });
+
+        localStorage.setItem("emergencyContacts", JSON.stringify(contacts));
+    }
+
+    function addContact() {
+        const name = document.getElementById("contactName").value.trim();
+        const number = document.getElementById("contactNumber").value.trim();
+
+        if (name === "" || number === "") {
+            alert("Please enter both name and number!");
+            return;
+        }
+
+        contacts.push({ name, number });
+        renderContacts();
+        document.getElementById("contactName").value = "";
+        document.getElementById("contactNumber").value = "";
+    }
+
+    function deleteContact(index) {
+        contacts.splice(index, 1);
+        renderContacts();
+    }
+
+    renderContacts();
+</script>
+
+</body>
+</html>
