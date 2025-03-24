@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Incoming Call...</title>
+    <style>
+        body {
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #000;
+            color: white;
+            font-family: Arial, sans-serif;
+        }
+
+        .call-container {
+            text-align: center;
+        }
+
+        .profile-img {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            margin-bottom: 20px;
+            border: 4px solid white;
+        }
+
+        .caller-name {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .incoming-text {
+            font-size: 1.2rem;
+            margin-bottom: 40px;
+            color: #aaa;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 20px;
+        }
+
+        .button {
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-size: 1rem;
+            cursor: pointer;
+            color: white;
+            border: none;
+            transition: transform 0.2s;
+        }
+
+        .accept {
+            background-color: green;
+        }
+
+        .accept:hover {
+            background-color: #00cc00;
+            transform: scale(1.1);
+        }
+
+        .decline {
+            background-color: red;
+        }
+
+        .decline:hover {
+            background-color: #cc0000;
+            transform: scale(1.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="call-container">
+        <!-- Caller Profile Image -->
+        <img src="<%= profileImage %>" alt="Caller Profile" class="profile-img">
+        
+        <!-- Caller Name -->
+        <div class="caller-name"><%= callerName %></div>
+
+        <!-- Incoming Call Text -->
+        <div class="incoming-text">Incoming call...</div>
+
+        <!-- Accept/Decline Buttons -->
+        <div class="buttons">
+            <button class="button accept" onclick="acceptCall()">Accept</button>
+            <button class="button decline" onclick="declineCall()">Decline</button>
+        </div>
+    </div>
+
+    <script>
+        // Play ringtone when the page loads
+        const ringtone = new Audio('/ringtone.mp3'); // Ensure this path is correct
+        ringtone.loop = true;
+        ringtone.play();
+
+        function acceptCall() {
+            alert('Call accepted!');
+            ringtone.pause(); // Stop the ringtone
+            // Optionally redirect to a new page, or do any other action
+        }
+
+        function declineCall() {
+            alert('Call declined.');
+            ringtone.pause(); // Stop the ringtone
+            window.close(); // Close the call page
+        }
+    </script>
+</body>
+</html>

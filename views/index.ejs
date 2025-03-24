@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mobile Layout</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@600&family=Marcellus&display=swap');
+
+
+        body {
+            margin: 0;
+         height: 100vh;
+          display: flex;
+         justify-content: center;
+          align-items: center;
+        background: linear-gradient(120deg, #f6f9fc, #dfe4ea); /* Subtle gradient */
+         font-family: 'Poppins', sans-serif;
+      }
+
+
+        .container {
+            width: 90%;
+            max-width: 450px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 40px;
+        }
+
+        .button {
+    width: 95%;
+    max-width: 350px;
+    height: 120px;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 40px;
+    font-weight: bold;
+    text-align: center;
+    color: white;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+
+.red { background-color: #E63946; }
+.blue { background-color: #457B9D; }
+.green { background-color: #2A9D8F; }
+
+
+        .button:hover {
+            transform: scale(1.08);
+        }
+
+        header {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 15px;
+    position: absolute;
+    top: 0;
+    background-color: white; /* Background color for clarity */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Adds separation */
+    z-index: 10;
+}
+
+
+        .brand {
+            font-size: 32px;
+            font-weight: bold;
+            letter-spacing: 1px;
+            color: black;
+            font-family: 'Marcellus', serif;
+        }
+
+        .icons {
+            display: flex;
+            gap: 25px;
+            font-size: 28px;
+        }
+
+        .icons i {
+            cursor: pointer;
+        }
+
+        /* Dropdown menu styles */
+        .menu {
+            display: none;
+            position: absolute;
+            top: 50px;
+            right: 15px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            width: 200px;
+            font-size: 18px;
+        }
+
+        .menu a {
+            display: block;
+            padding: 12px;
+            color: black;
+            text-decoration: none;
+        }
+
+        .menu a:hover {
+            background: #eee;
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                gap: 45px;
+            }
+
+            .button {
+                height: 110px;
+                font-size: 36px;
+            }
+        }
+        a {
+    color: black; /* Ensure icons are black */
+    text-decoration: none; /* Remove underline (optional) */
+}
+
+a:visited {
+    color: black; /* Prevent color change for visited links */
+}
+
+a:hover {
+    color: gray; /* Optional: Change color on hover */
+}
+
+a:active {
+    color: black; /* Prevent color change when clicking */
+}
+
+
+    </style>
+</head>
+<body>
+    <header>
+        <div class="brand">ESCAPE KEY</div>
+        <nav>
+            <div class="icons">
+                <a href="/search"><i class="bi bi-search"></i></a>
+                <a href="/account"><i class="bi bi-person"></i></a>
+                <i class="bi bi-three-dots-vertical" onclick="toggleMenu()"></i>
+            </div>
+        </nav>
+        <!-- Dropdown Menu -->
+        <div id="menu" class="menu">
+            <a href="/resources">Resources Page</a>
+            <a href="/about">About Us</a>
+            <a href="/emergency">Add Emergency Contacts</a>
+        </div>
+    </header>
+
+    <div class="container">
+        <button class="button red" onclick="changeColor(this); getLiveLocation();">S O S</button>
+        
+        <button id="call-button" class="button blue">Call Me</button>
+    <select id="time-options" style="display: none;">
+        <option value="">close</option>
+        <option value="0">Call Now</option>
+        <option value="1">1 Minute Later</option>
+        <option value="5">5 Minutes Later</option>
+        <option value="10">10 Minutes Later</option>
+    </select>
+
+    
+        
+    </div>
+
+    <script>
+        function changeColor(button) {
+            button.classList.remove("red", "blue");
+            button.classList.add("green");
+        }
+
+        function getLiveLocation() {
+          if (navigator.geolocation) {
+             navigator.geolocation.getCurrentPosition(
+            position => {
+                const latitude = position.coords.latitude;
+                const longitude = position.coords.longitude;
+                const googleMapsUrl = `https://www.google.com/maps?q=${latitude},${longitude}`;
+                // Open location in Google Maps
+                window.open(googleMapsUrl, '_blank');
+            },
+            error => {
+                alert('Error fetching location. Please allow location access.');
+            }
+        );
+    } else {
+        alert('Geolocation is not supported by this browser.');
+    }
+}
+
+        function toggleMenu() {
+            var menu = document.getElementById("menu");
+            menu.style.display = (menu.style.display === "block") ? "none" : "block";
+        }
+
+        // Hide menu when clicking outside
+        document.addEventListener("click", function(event) {
+            var menu = document.getElementById("menu");
+            var threeDots = document.querySelector(".bi-three-dots-vertical");
+
+            if (!menu.contains(event.target) && event.target !== threeDots) {
+                menu.style.display = "none";
+            }
+        });
+
+        function sendPrecautionCall() {
+            alert("A precautionary call has been made. Stay calm and follow the planned script.");
+            // You can add actual call functionality using Twilio API or WebRTC
+        }
+
+        // Event listener for the "Call Me" button to toggle the dropdown
+document.getElementById('call-button').addEventListener('click', () => {
+    const dropdown = document.getElementById('time-options');
+
+    // Toggle the visibility of the dropdown
+    if (dropdown.style.display === 'none' || dropdown.style.display === '') {
+        dropdown.style.display = 'block'; // Show the dropdown
+    } else {
+        dropdown.style.display = 'none'; // Hide the dropdown
+    }
+});
+
+// Event listener for dropdown change
+document.getElementById('time-options').addEventListener('change', () => {
+    const selectedTime = document.getElementById('time-options').value; // Get selected option value as a string
+
+    if (selectedTime === "0") {
+        // For "Call Now", open the call page immediately
+        openCallPage();
+    } else if (selectedTime !== "") {
+        // Schedule the call for later options
+        const delay = parseInt(selectedTime) * 60 * 1000; // Convert minutes to milliseconds
+        alert(`Call scheduled in ${selectedTime} minute(s).`);
+        setTimeout(() => {
+            openCallPage();
+        }, delay);
+    }
+});
+
+// Function to open the call page
+function openCallPage() {
+    // Opens the phone call UI in a new page
+    window.open('/call', '_blank', 'width=360,height=640');
+}
+      
+    </script>
+</body>
+</html>
