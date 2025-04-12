@@ -18,15 +18,15 @@ app.set('views', path.join(__dirname, 'views'));
 
 // Define routes
 app.get('/', (req, res) => {
-    res.render('index', { title: 'Home Page' });
+    res.render('register', { title: 'Home Page' });
 });
 
 app.get('/about', (req, res) => {
     res.render('about', { title: 'About Page' });
 });
 
-app.get('/account', (req, res) => {
-    res.render('account', { title: 'Account Page' });
+app.get('/register', (req, res) => {
+    res.render('register', { title: 'Register Page' });
 });
 
 app.get('/emergency', (req, res) => {
@@ -39,6 +39,14 @@ app.get('/resources', (req, res) => {
 
 app.get('/search', (req, res) => {
     res.render('search', { title: 'Search Page' });
+});
+
+app.get('/login', (req, res) => {
+    res.render('login', { title: 'Login Page' });
+});
+
+app.get('/index', (req, res) => {
+    res.render('index', { title: 'Dashboard Page' });
 });
 
 //call me
