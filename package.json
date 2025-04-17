@@ -19,6 +19,7 @@
   "homepage": "https://github.com/Gokul-Barman/EscapeKey#readme",
   "description": "",
   "dependencies": {
+    "@google/generative-ai": "^0.24.0",
     "@supabase/supabase-js": "^2.49.4",
     "dotenv": "^16.5.0",
     "ejs": "^3.1.10",

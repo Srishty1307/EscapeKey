@@ -3,12 +3,14 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import nodemailer from 'nodemailer';
 import dotenv from 'dotenv';
+import { startChatSession, sendChatMessage } from './services/geminiService.js';
 
 // Load environment variables from .env file
 dotenv.config();
 
 const app = express();
 const port = 3000;
+const activeChatSessions = {};
 
 app.use(express.static("public"));
 app.use(express.json()); // To parse JSON request bodies
@@ -28,6 +30,10 @@ app.get('/', (req, res) => {
 
 app.get('/about', (req, res) => {
     res.render('about', { title: 'About Page' });
+});
+
+app.get('/chat', (req, res) => {
+    res.render('chat', { title: 'Chat Support' });
 });
 
 app.get('/register', (req, res) => {
@@ -142,6 +148,48 @@ app.post('/api/send-sos', async (req, res) => {
         res.status(500).json({ error: 'Failed to send SOS emails' });
     }
 });
+//ai
+app.post('/api/chat/start', async (req, res) => {
+    try {
+      const { userId } = req.body;
+      
+      if (!userId) {
+        return res.status(400).json({ error: 'User ID is required' });
+      }
+      
+      const chatSession = await startChatSession();
+      activeChatSessions[userId] = chatSession;
+      
+      res.status(200).json({ success: true, message: 'Chat session started' });
+    } catch (error) {
+      console.error('Error starting chat session:', error);
+      res.status(500).json({ error: 'Failed to start chat session' });
+    }
+  });
+  
+  app.post('/api/chat/message', async (req, res) => {
+    try {
+      const { userId, message } = req.body;
+      
+      if (!userId || !message) {
+        return res.status(400).json({ error: 'User ID and message are required' });
+      }
+      
+      const chatSession = activeChatSessions[userId];
+      
+      if (!chatSession) {
+        // Start a new session if one doesn't exist
+        activeChatSessions[userId] = await startChatSession();
+      }
+      
+      const response = await sendChatMessage(activeChatSessions[userId], message);
+      
+      res.status(200).json({ success: true, response });
+    } catch (error) {
+      console.error('Error sending chat message:', error);
+      res.status(500).json({ error: 'Failed to send chat message' });
+    }
+  });
 
 // Start the server
 app.listen(port, ()=> {
