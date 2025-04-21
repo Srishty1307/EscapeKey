@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gmail Contacts</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #F9D923;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            width: 85%;
+            max-width: 450px;
+            padding: 20px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+            text-align: center;
+        }
+
+        h2 {
+            color: #EB5353;
+        }
+
+        input {
+            width: 80%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        button {
+            padding: 10px 15px;
+            background-color: #36AE7C;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        button:hover {
+            background-color: #2D8A62;
+        }
+
+        .contact-list {
+            margin-top: 20px;
+            text-align: left;
+        }
+
+        .contact {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            background-color: #F5F5F5;
+            margin: 5px 0;
+            border-radius: 5px;
+        }
+
+        .delete-btn {
+            background-color: #EB5353;
+            border: none;
+            padding: 5px 10px;
+            color: white;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+
+        .delete-btn:hover {
+            background-color: #C72C41;
+        }
+        
+        .back-link {
+            margin-top: 20px;
+            text-align: center;
+        }
+        
+        .back-link a {
+            color: #187498;
+            text-decoration: none;
+        }
+        
+        .back-link a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Add Gmail Contacts</h2>
+    
+    <input type="email" id="gmailAddress" placeholder="Enter Gmail Address">
+    <button onclick="addGmail()">Add Gmail</button>
+
+    <div class="contact-list" id="gmailList">
+        <h3>Saved Gmail Contacts</h3>
+        <p>No Gmail contacts added yet.</p>
+    </div>
+    
+    <div class="back-link">
+        <a href="/index">← Back to Dashboard</a>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+    // Initialize Supabase client
+    const supabaseUrl = 'https://ymxigsibffkloakqualr.supabase.co';
+    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlteGlnc2liZmZrbG9ha3F1YWxyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDMzNTEyNTgsImV4cCI6MjA1ODkyNzI1OH0.E_Y4CqmWN12peYFdn6qyXTKw6ja1e9AfT-b3kDg9_6M';
+    const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+    
+    // Store for Gmail contacts
+    let gmailContacts = [];
+    
+    // Load Gmail contacts on page load
+    document.addEventListener('DOMContentLoaded', async function() {
+        await loadGmailContacts();
+    });
+    
+    async function loadGmailContacts() {
+        try {
+            // Get the current user
+            const { data: { user } } = await supabase.auth.getUser();
+            
+            if (!user) {
+                alert('Please login to manage Gmail contacts.');
+                window.location.href = '/login';
+                return;
+            }
+            
+            // Fetch Gmail contacts from Supabase
+            const { data, error } = await supabase
+                .from('gmail_contacts')
+                .select('*')
+                .eq('user_id', user.id);
+                
+            if (error) {
+                console.error('Error loading Gmail contacts:', error);
+                return;
+            }
+            
+            gmailContacts = data || [];
+            renderGmailContacts();
+        } catch (err) {
+            console.error('Error:', err);
+        }
+    }
+    
+    function renderGmailContacts() {
+        const gmailList = document.getElementById("gmailList");
+        gmailList.innerHTML = "<h3>Saved Gmail Contacts</h3>";
+
+        if (gmailContacts.length === 0) {
+            gmailList.innerHTML += "<p>No Gmail contacts added yet.</p>";
+            return;
+        }
+
+        gmailContacts.forEach((contact) => {
+            gmailList.innerHTML += `
+                <div class="contact">
+                    <span>${contact.gmail}</span>
+                    <button class="delete-btn" onclick="deleteGmail('${contact.id}')">Delete</button>
+                </div>
+            `;
+        });
+    }
+    
+    async function addGmail() {
+        const gmail = document.getElementById("gmailAddress").value.trim();
+        
+        if (gmail === "") {
+            alert("Please enter a Gmail address!");
+            return;
+        }
+        
+        // Validate email format
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(gmail)) {
+            alert("Please enter a valid email address!");
+            return;
+        }
+        
+        try {
+            // Get the current user
+            const { data: { user } } = await supabase.auth.getUser();
+            
+            if (!user) {
+                alert('Please login to add Gmail contacts.');
+                window.location.href = '/login';
+                return;
+            }
+            
+            // Add Gmail to Supabase
+            const { data, error } = await supabase
+                .from('gmail_contacts')
+                .insert([
+                    { 
+                        user_id: user.id,
+                        gmail: gmail
+                    }
+                ])
+                .select();
+                
+            if (error) {
+                alert('Error adding Gmail contact: ' + error.message);
+                return;
+            }
+            
+            // Add to local array
+            if (data && data.length > 0) {
+                gmailContacts.push(data[0]);
+                renderGmailContacts();
+                document.getElementById("gmailAddress").value = "";
+            }
+        } catch (err) {
+            console.error('Error:', err);
+            alert('An error occurred while adding the Gmail contact.');
+        }
+    }
+    
+    async function deleteGmail(id) {
+        try {
+            // Delete from Supabase
+            const { error } = await supabase
+                .from('gmail_contacts')
+                .delete()
+                .eq('id', id);
+                
+            if (error) {
+                alert('Error deleting Gmail contact: ' + error.message);
+                return;
+            }
+            
+            // Remove from local array
+            gmailContacts = gmailContacts.filter(contact => contact.id !== id);
+            renderGmailContacts();
+        } catch (err) {
+            console.error('Error:', err);
+            alert('An error occurred while deleting the Gmail contact.');
+        }
+    }
+</script>
+
+</body>
+</html>

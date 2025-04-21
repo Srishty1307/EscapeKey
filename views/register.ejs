@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registration</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 350px;
+        }
+        h2 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #555;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 10px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .login-link {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .login-link a {
+            color: #4CAF50;
+            text-decoration: none;
+        }
+        .login-link a:hover {
+            text-decoration: underline;
+        }
+        .error-message {
+            color: red;
+            margin-top: 15px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Create an Account</h2>
+        <div id="error-message" class="error-message"></div>
+        <form id="registration-form">
+            <div class="form-group">
+                <label for="name">Full Name</label>
+                <input type="text" id="name" required>
+            </div>
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" required>
+            </div>
+            <div class="form-group">
+                <label for="confirmPassword">Confirm Password</label>
+                <input type="password" id="confirmPassword" required>
+            </div>
+            <button type="submit">Register</button>
+        </form>
+        <div class="login-link">
+            Already registered? <a href="/login">Login here</a>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+      // Initialize Supabase client
+const supabaseUrl = 'https://ymxigsibffkloakqualr.supabase.co';
+const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlteGlnc2liZmZrbG9ha3F1YWxyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDMzNTEyNTgsImV4cCI6MjA1ODkyNzI1OH0.E_Y4CqmWN12peYFdn6qyXTKw6ja1e9AfT-b3kDg9_6M';
+const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+document.getElementById('registration-form').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const errorElement = document.getElementById('error-message');
+    errorElement.textContent = '';
+    
+    const name = document.getElementById('name').value;
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+    const confirmPassword = document.getElementById('confirmPassword').value;
+    
+    // Basic validation
+    if (password !== confirmPassword) {
+        errorElement.textContent = "Passwords don't match";
+        return;
+    }
+    
+    try {
+        // Register user with Supabase
+        const { data, error } = await supabase.auth.signUp({
+            email: email,
+            password: password,
+            options: {
+                data: {
+                    full_name: name
+                }
+            }
+        });
+        
+        if (error) {
+            errorElement.textContent = error.message;
+        } else {
+            // Store additional user information in a custom table if needed
+            const { data: profileData, error: profileError } = await supabase
+                .from('profiles')
+                .insert([
+                    { 
+                        user_id: data.user.id, 
+                        full_name: name,
+                        email: email
+                    }
+                ]);
+            
+            if (profileError) {
+                console.error('Error saving profile:', profileError);
+            }
+             // Display an email confirmation message
+    errorElement.style.color = 'green'; // Change the message color to green for success
+    errorElement.textContent = "Registration successful! Please check your email to confirm your account.";
+
+    // Optional: Delay the redirection to let the user see the message
+    setTimeout(() => {
+        window.location.href = '/login?registered=true';
+    }, 5000); // Redirect after 5 seconds
+
+
+        }
+    } catch (err) {
+        errorElement.textContent = 'An error occurred during registration';
+        console.error(err);
+    }
+});
+    </script>
+</body>
+</html>
